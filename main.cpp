@@ -5,15 +5,19 @@
 int main(){
     std::cout << "Starting..." << std::endl;
     std::vector<Node> example;
-    size_t dim = 10;
+    size_t dim = 2;
     size_t number = 1000;
     for (int i =0; i<number; i++){
-        std::vector<float> tmp;
+        std::vector<float> tmp, mtmp;
         for (int j=0; j<dim; j++){
-            tmp.push_back(std::rand()%number /(float)number);
+            float val = (std::rand()%number) /(float)number;
+            tmp.push_back(val);
+            mtmp.push_back(-1.0*val);
         }
         Node node = {tmp, -1};
+        Node mnode = {mtmp, -1};
         example.push_back(node);
+        example.push_back(mnode);
     }
     std::cout << "Create interface..." << std::endl;
     AnnoyInterface annoy_interface(example, dim);
