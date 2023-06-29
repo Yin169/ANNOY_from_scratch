@@ -34,7 +34,7 @@ class AnnoyIndex{
     protected:
     const static float eps = 1e-6;
     const static size_t num_iter = 100;
-    const static size_t max_ind = 12;
+    const static size_t max_ind = 20;
     size_t dim;
     size_t datasize;
 };
@@ -133,6 +133,7 @@ PII AnnoyIndex :: TwoMean(std::vector<Node> nodes){
 }
 
 AnnoyIndex* AnnoyIndex :: fit(std::vector<Node> nodes){
+    if (nodes.size() <= 0) return nullptr;
     std::cout << nodes.size() << std::endl;
     if (nodes.size() <= max_ind) return new AnnoyIndex(left=nullptr, right=nullptr, dim=dim, datasize=nodes.size(), leaf_node=nodes);
     PII cens = TwoMean(nodes);
@@ -166,7 +167,12 @@ AnnoyIndex* AnnoyIndex :: fit(std::vector<Node> nodes){
         }
     }
     std::vector<Node> empty;
-    return new AnnoyIndex(left=fit(nodes1), right=fit(nodes0), dim=dim, datasize=nodes.size(), leaf_node=empty);
+    AnnoyIndex* lleft = fit(nodes1);
+    AnnoyIndex* rright = fit(nodes0);
+    if (lleft==nullptr || rright==nullptr) {
+        return new AnnoyIndex(left=nullptr, right=nullptr, dim=dim, datasize=nodes.size(), leaf_node=nodes);
+    }
+    return new AnnoyIndex(left=lleft, right=rright, dim=dim, datasize=nodes.size(), leaf_node=empty);
 }
 
 
